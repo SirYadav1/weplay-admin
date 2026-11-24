@@ -373,7 +373,7 @@ async function api(path,opts){
   let r;try{r=await fetch(S.base+path,{method:o.method||'GET',headers:headers,body:o.body})}catch(e){throw new Error('Cannot reach backend. Check the backend URL.')}
   if(r.status===401){doLogout();throw new Error('Session expired. Sign in again.')}
   let d={};try{d=await r.json()}catch(e){}
-  if(!r.ok)throw new Error(d.error&&d.error.message?d.error.message:'HTTP '+r.status);
+  if(!r.ok){const err=new Error(d.error&&d.error.message?d.error.message:'HTTP '+r.status);err.status=r.status;throw err}
   return d;
 }
 function setState(where,mode,msg,retry){
@@ -527,13 +527,18 @@ function auditPage(dir){const max=Math.floor(Math.max(0,S.audit.rows.length-1)/S
 /* ── Gift animations ───────────────────────────────────────────────── */
 async function animLoad(){
   setState('anim-state','loading');
-  try{
-    const [a,g]=await Promise.all([api('/v1/const/gift-anims'),api('/v1/const/gifts?limit=200')]);
-    S.anim.rows=(a.items||[]).slice().sort((x,y)=>x.gift_id-y.gift_id);
-    S.anim.catalog=g.gifts||[];
-    S.anim.byId={};S.anim.catalog.forEach(x=>{S.anim.byId[x.gift_id]=x});
-    renderAnim();setState('anim-state','none');
-  }catch(e){$('anim-body').innerHTML='';setState('anim-state','error',e.message,'animLoad()')}
+  // Older backend builds may not expose the Phase G routes yet: keep the
+  // other tabs usable and show an informative empty view instead of failing.
+  const [aResult,gResult]=await Promise.allSettled([api('/v1/const/gift-anims'),api('/v1/const/gifts?limit=200')]);
+  if(aResult.status==='rejected'&&aResult.reason&&aResult.reason.status===401){toast(aResult.reason.message,true);return}
+  if(aResult.status==='rejected'&&gResult.status==='rejected'){setState('anim-state','error',aResult.reason.message,'animLoad()');$('anim-body').innerHTML='';return}
+  const a=aResult.status==='fulfilled'?aResult.value:{items:[]};
+  const g=gResult.status==='fulfilled'?gResult.value:{gifts:[]};
+  S.anim.rows=(a.items||[]).slice().sort((x,y)=>x.gift_id-y.gift_id);
+  S.anim.catalog=g.gifts||[];
+  S.anim.byId={};S.anim.catalog.forEach(x=>{S.anim.byId[x.gift_id]=x});
+  renderAnim();setState('anim-state','none');
+  if(aResult.status==='rejected')toast('Animation list unavailable: backend build needs Phase G routes.',true);
 }
 function renderAnim(){
   const q=($('a-q').value||'').trim().toLowerCase();
