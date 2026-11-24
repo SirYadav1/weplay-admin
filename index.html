@@ -3,272 +3,631 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WePlay Admin</title>
+<title>WePlay — Administration</title>
 <style>
-:root{--bg:#0f1420;--sider:#171e2c;--card:#1d2534;--accent:#00ccf9;--ink:#e8ecf4;--muted:#8d98b2;
---red:#e8455f;--green:#3ecf6e;--gold:#ffc53d;--border:#252d40;--hover:#222a3c}
-*{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--ink);font-family:-apple-system,'Segoe UI',Roboto,sans-serif;font-size:14px}
-a{color:var(--accent);text-decoration:none}
-button{font-family:inherit;cursor:pointer}
-input,select,textarea{font-family:inherit}
+:root{
+  --canvas:#f3f4f6; --surface:#ffffff; --surface-alt:#f8f9fb;
+  --ink:#1b2430; --ink-soft:#3e4a59; --muted:#5d6978;
+  --line:#dfe3e9; --line-strong:#cbd2dc;
+  --accent:#34445b; --accent-hover:#253247;
+  --danger:#9e2833; --danger-bg:#fdf1f2;
+  --success:#1e7346; --success-bg:#eef7f1;
+  --warning:#8a5a08; --warning-bg:#fdf6e8;
+  --sidebar:#ffffff; --radius:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--canvas);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--ink-soft);outline-offset:2px}
+.ico{flex:none;vertical-align:-3px}
 
-/* login */
-#login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100}
-#login .box{background:var(--sider);padding:32px;border-radius:14px;width:360px;border:1px solid var(--border)}
-#login h1{font-size:22px;color:var(--accent);margin-bottom:4px}
-#login .sub{color:var(--muted);font-size:12px;margin-bottom:20px}
-#login label{display:block;font-size:12px;color:var(--muted);margin:12px 0 4px}
-#login input{width:100%;padding:10px 12px;background:#242b3a;border:1px solid var(--border);border-radius:8px;color:var(--ink);font-size:14px}
-#login input:focus{outline:none;border-color:var(--accent)}
-#login button{width:100%;padding:11px;background:var(--accent);color:#06202b;border:0;border-radius:8px;font-weight:700;font-size:15px;margin-top:16px}
-#login .err{color:var(--red);font-size:12px;margin-top:8px;min-height:16px}
-#login .hint{margin-top:16px;font-size:11px;color:var(--muted)}
+/* ── Login ───────────────────────────────── */
+#login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--canvas)}
+.login-card{width:100%;max-width:384px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:32px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.brand-mark{width:34px;height:34px;border:1px solid var(--line-strong);border-radius:var(--radius);display:grid;place-items:center;color:var(--ink)}
+.brand-name{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.brand-sub{font-size:11px;color:var(--muted)}
+.login-card h1{font-size:18px;font-weight:650;letter-spacing:-.01em}
+.login-card .lede{color:var(--muted);margin:4px 0 22px;font-size:12.5px}
+.field{display:block;margin-bottom:14px}
+.field>span{display:block;font-size:11.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:9px 10px;background:var(--surface);border:1px solid var(--line-strong);border-radius:5px}
+.field input:hover,.field select:hover{border-color:var(--muted)}
+.field input:focus,.field select:focus{border-color:var(--ink-soft);outline:none;box-shadow:0 0 0 2px rgba(52,68,91,.12)}
+.hintline{font-size:11.5px;color:var(--muted);margin-top:16px;line-height:1.6}
 
-/* shell */
-.shell{display:none}
-.shell.on{display:flex}
-aside{width:220px;background:var(--sider);min-height:100vh;padding:16px 0;position:fixed;top:0;bottom:0;left:0;border-right:1px solid var(--border)}
-aside .logo{padding:0 20px 16px;font-size:16px;font-weight:700;color:var(--accent);border-bottom:1px solid var(--border);margin-bottom:12px}
-aside nav a,aside nav button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 20px;background:none;border:0;color:var(--muted);font-size:13.5px;text-align:left;transition:.15s}
-aside nav a:hover,aside nav button:hover{background:var(--hover);color:var(--ink)}
-aside nav button.on{color:var(--accent);border-left:3px solid var(--accent);padding-left:17px}
-main{margin-left:220px;padding:24px 32px;flex:1;min-height:100vh}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.topbar h2{font-size:20px;font-weight:700}
-.topbar .who{color:var(--muted);font-size:13px}
+/* ── Buttons ─────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 11px;background:var(--surface);border:1px solid var(--line-strong);border-radius:5px;color:var(--ink-soft);font-size:12px;font-weight:550;white-space:nowrap;transition:background .12s,border-color .12s}
+.btn:hover{background:var(--surface-alt);border-color:var(--muted);color:var(--ink)}
+.btn:active{background:#eef0f3}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover);color:#fff}
+.btn.danger{color:var(--danger);border-color:#d9b7bb}
+.btn.danger:hover{background:var(--danger-bg);border-color:var(--danger)}
+.btn.sm{padding:4px 8px;font-size:11.5px}
+.btn.icon{padding:6px;width:30px;height:30px}
+.btn.wide{width:100%;padding:10px}
+.btn.link{border-color:transparent;background:transparent;padding:4px 6px}
+.btn.link:hover{border-color:var(--line)}
 
-/* cards / stats */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
-.stat b{display:block;font-size:26px;color:var(--accent)}
-.stat span{color:var(--muted);font-size:12px}
+/* ── Shell ───────────────────────────────── */
+.shell{display:none;min-height:100vh}
+.shell.on{display:block}
+aside{position:fixed;inset:0 auto 0 0;width:228px;background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:10}
+.side-head{height:64px;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid var(--line)}
+.side-head .brand{margin:0}
+.side-head .brand-mark{width:28px;height:28px}
+aside nav{padding:12px 10px;flex:1;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 10px 6px}
+.navbtn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:1px solid transparent;background:transparent;border-radius:5px;color:var(--ink-soft);font-size:12.5px;text-align:left;margin-bottom:2px}
+.navbtn:hover{background:var(--surface-alt)}
+.navbtn.active{background:#eceff3;color:var(--ink);font-weight:650;border-color:var(--line)}
+.navbtn .count{margin-left:auto;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.side-foot{padding:12px 10px;border-top:1px solid var(--line)}
+.who{display:flex;align-items:center;gap:8px;padding:6px 8px 10px;font-size:11.5px;color:var(--muted);min-width:0}
+.who strong{color:var(--ink-soft);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* tables */
-.tblwrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:auto}
-table{width:100%;border-collapse:collapse}
-th{text-align:left;padding:10px 14px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
-td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
-tr:last-child td{border-bottom:0}
-tr:hover td{background:var(--hover)}
+main{margin-left:228px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:8;background:rgba(243,244,246,.96);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;min-height:64px;padding:0 28px}
+.topbar h1{font-size:16px;font-weight:650;letter-spacing:-.01em}
+.topbar .crumb{color:var(--muted);font-size:11.5px;margin-top:1px}
+.topbar .spacer{flex:1}
+.page{padding:22px 28px 40px;max-width:1500px;width:100%}
+section.view{display:none}
+section.view.active{display:block}
 
-/* controls */
-.btn{padding:7px 12px;border-radius:7px;border:1px solid var(--border);background:var(--hover);color:var(--ink);font-size:12.5px}
-.btn.primary{background:var(--accent);color:#06202b;border-color:var(--accent);font-weight:700}
-.btn.danger{border-color:var(--red);color:var(--red)}
-.btn:hover{filter:brightness(1.15)}
-input,select,textarea{background:#242b3a;border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:9px 12px;font-size:13.5px}
-input:focus,select:focus{outline:none;border-color:var(--accent)}
-.search{display:flex;gap:10px;margin-bottom:14px}
-.search input{flex:1;max-width:340px}
+/* ── Cards, stats ────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.card-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.card-head h2{font-size:12.5px;font-weight:650}
+.card-head .spacer{flex:1}
+.card-body{padding:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px}
+.stat .top{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.stat .value{font-size:26px;font-weight:650;letter-spacing:-.02em;margin-top:9px;font-variant-numeric:tabular-nums}
+.stat .note{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* badges */
-.badge{padding:3px 9px;border-radius:11px;font-size:11px;font-weight:700;display:inline-block}
-.b-admin{background:#00ccf933;color:var(--accent)}
-.b-banned{background:#e8455f33;color:var(--red)}
-.b-ok{background:#3ecf6e33;color:var(--green)}
-.b-gold{background:#ffc53d33;color:var(--gold)}
+/* ── Tables ──────────────────────────────── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--surface-alt);padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle;color:var(--ink-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#fafbfc}
+td.num,th.num{text-align:right}
+.cell-main{font-weight:600;color:var(--ink)}
+.cell-sub{font-size:11px;color:var(--muted)}
+.actions{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1px solid var(--line-strong);border-radius:10px;font-size:10.5px;font-weight:600;color:var(--ink-soft);background:var(--surface);white-space:nowrap}
+.badge.good{color:var(--success);border-color:#b8d8c6;background:var(--success-bg)}
+.badge.bad{color:var(--danger);border-color:#dfb9bd;background:var(--danger-bg)}
+.badge.warn{color:var(--warning);border-color:#e3cda3;background:var(--warning-bg)}
+.badge.neutral{color:var(--muted);background:var(--surface-alt)}
 
-/* modal */
-.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:50}
-.modal.on{display:flex}
-.modal .box{background:var(--sider);border:1px solid var(--border);border-radius:12px;padding:24px;width:400px;max-width:92vw}
-.modal h3{margin-bottom:14px;font-size:16px}
-.modal label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
-.modal input,.modal select,.modal textarea{width:100%}
-.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+/* ── Controls / states / pagination ──────── */
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input[type=search]{width:280px;max-width:100%;padding:7px 10px;border:1px solid var(--line-strong);border-radius:5px;background:var(--surface)}
+.toolbar select{padding:7px 8px;border:1px solid var(--line-strong);border-radius:5px;background:var(--surface)}
+.toolbar .spacer{flex:1}
+.state{padding:30px 14px;text-align:center;color:var(--muted);font-size:12.5px}
+.state .state-icon{color:var(--line-strong);margin-bottom:8px}
+.state .state-title{color:var(--ink-soft);font-weight:600;margin-bottom:3px}
+.state .btn{margin-top:12px}
+.pager{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
+.pager .spacer{flex:1}
+.pager .range{font-variant-numeric:tabular-nums}
+.trunc{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-line{font-size:11.5px;color:var(--muted);margin-bottom:12px;line-height:1.5}
 
-#toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--accent);color:var(--ink);padding:12px 18px;border-radius:10px;display:none;z-index:99;font-size:13px}
-.audit-act{color:var(--accent);font-weight:600}
-.muted{color:var(--muted)}
+/* ── Modal / toast ───────────────────────── */
+#modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(20,27,36,.44)}
+#modal.on{display:flex}
+.modal-card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--radius);padding:20px}
+.modal-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+.modal-head h3{font-size:14px;font-weight:650;flex:1}
+.modal-body{font-size:12.5px;color:var(--ink-soft)}
+.modal-body p{margin-bottom:10px;line-height:1.6}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:14px;border-top:1px solid var(--line)}
+#toast{position:fixed;right:20px;bottom:20px;z-index:80;display:none;align-items:center;gap:9px;max-width:360px;padding:11px 14px;background:var(--surface);border:1px solid var(--line-strong);border-left:3px solid var(--success);border-radius:5px;box-shadow:0 4px 14px rgba(20,27,36,.08);font-size:12.5px}
+#toast.error{border-left-color:var(--danger)}
+#toast .ico{color:var(--success)}
+#toast.error .ico{color:var(--danger)}
+
+@media(max-width:900px){
+  aside{width:100%;height:auto;position:static;border-right:0;border-bottom:1px solid var(--line);flex-direction:row;align-items:center;flex-wrap:wrap}
+  .side-head{height:auto;padding:12px 16px;border-bottom:0}
+  aside nav{padding:0 10px 10px;display:flex;gap:4px;flex-wrap:wrap;overflow:visible}
+  .nav-label,.side-foot{display:none}
+  .navbtn{width:auto;margin:0}
+  main{margin-left:0}
+  .topbar{position:static;padding:12px 16px}
+  .page{padding:16px 16px 32px}
+  .toolbar input[type=search]{width:100%}
+}
 </style>
 </head>
 <body>
 
+<!-- Login -->
 <div id="login">
-  <div class="box">
-    <h1>WePlay Admin</h1>
-    <div class="sub">Backend management panel</div>
-    <label>Backend URL</label>
-    <input id="burl" placeholder="http://107.148.225.79:8080">
-    <label>Username</label>
-    <input id="lu" autocomplete="username">
-    <label>Password</label>
-    <input id="lp" type="password" autocomplete="current-password">
-    <button onclick="login()">Sign in</button>
-    <div class="err" id="lerr"></div>
-    <div class="hint">uid 1 is auto-promoted to admin on first signup.</div>
+  <div class="login-card">
+    <div class="brand">
+      <span class="brand-mark" id="login-mark"></span>
+      <span><span class="brand-name">WePlay</span><br><span class="brand-sub">Administration console</span></span>
+    </div>
+    <h1>Sign in</h1>
+    <p class="lede">Use a backend account with administrator access.</p>
+    <label class="field"><span>Backend URL</span><input id="burl" type="url" spellcheck="false" placeholder="http://107.148.225.79" autocomplete="off"></label>
+    <label class="field"><span>Username</span><input id="lu" autocomplete="username" spellcheck="false"></label>
+    <label class="field"><span>Password</span><input id="lp" type="password" autocomplete="current-password"></label>
+    <button class="btn primary wide" id="login-btn" onclick="doLogin()">Sign in</button>
+    <div id="lerr" class="hintline" role="alert" style="color:var(--danger)"></div>
+    <div class="hintline">Administrator rights are checked against the backend on every request. Sessions end when the browser tab closes.</div>
   </div>
 </div>
 
-<div class="shell on" id="shell">
+<!-- Application shell -->
+<div class="shell" id="shell">
   <aside>
-    <div class="logo">WePlay Admin</div>
-    <nav>
-      <button class="on" data-p="stats" onclick="tab('stats')">▦ Dashboard</button>
-      <button data-p="users" onclick="tab('users')">👤 Users</button>
-      <button data-p="rooms" onclick="tab('rooms')">🏠 Rooms</button>
-      <button data-p="reports" onclick="tab('reports')">⚑ Reports</button>
-      <button data-p="audit" onclick="tab('audit')">☰ Audit Log</button>
+    <div class="side-head">
+      <div class="brand">
+        <span class="brand-mark" id="side-mark"></span>
+        <span><span class="brand-name">WePlay</span><br><span class="brand-sub">Administration</span></span>
+      </div>
+    </div>
+    <nav id="nav">
+      <div class="nav-label">Manage</div>
+      <button class="navbtn active" data-p="stats" onclick="go('stats')"><span id="ic-stats"></span>Dashboard</button>
+      <button class="navbtn" data-p="users" onclick="go('users')"><span id="ic-users"></span>Users <span class="count" id="cnt-users"></span></button>
+      <button class="navbtn" data-p="rooms" onclick="go('rooms')"><span id="ic-rooms"></span>Rooms</button>
+      <button class="navbtn" data-p="reports" onclick="go('reports')"><span class="count" id="cnt-reports"></span><span id="ic-reports"></span>Reports</button>
+      <button class="navbtn" data-p="anim" onclick="go('anim')"><span id="ic-anim"></span>Gift animations</button>
+      <div class="nav-label" style="margin-top:10px">System</div>
+      <button class="navbtn" data-p="audit" onclick="go('audit')"><span id="ic-audit"></span>Audit log</button>
     </nav>
-    <div style="position:absolute;bottom:16px;width:100%;padding:0 20px">
-      <button class="btn danger" style="width:100%" onclick="logout()">Logout</button>
+    <div class="side-foot">
+      <div class="who"><span id="ic-shield"></span><strong id="who">—</strong></div>
+      <button class="btn" style="width:100%" onclick="doLogout()"><span id="ic-logout"></span>Sign out</button>
     </div>
   </aside>
   <main>
-    <div class="topbar"><h2 id="ptitle">Dashboard</h2><span class="who" id="who"></span></div>
-    <div id="msg"></div>
+    <div class="topbar">
+      <div><h1 id="ptitle">Dashboard</h1><div class="crumb" id="psub">Backend overview</div></div>
+      <div class="spacer"></div>
+      <button class="btn" onclick="reload()" title="Refresh current view"><span id="ic-refresh"></span>Refresh</button>
+    </div>
+    <div class="page">
 
-    <section id="p-stats">
-      <div class="stats" id="stats"></div>
-      <h3 style="margin:24px 0 10px;font-size:15px">Recent Audit</h3>
-      <div class="tblwrap"><table><thead><tr><th>Action</th><th>Target UID</th><th>Detail</th><th>When</th></tr></thead><tbody id="mini-audit"></tbody></table></div>
-    </section>
+      <!-- Dashboard -->
+      <section class="view active" id="v-stats">
+        <div class="stats" id="stats-grid"></div>
+        <div class="card">
+          <div class="card-head"><h2>Recent administrator activity</h2><div class="spacer"></div><button class="btn sm link" onclick="go('audit')">View all <span id="ic-right"></span></button></div>
+          <div id="stats-audit-state"></div>
+          <div class="table-wrap"><table><thead><tr><th>Action</th><th>Admin</th><th>Target</th><th>Detail</th><th>When</th></tr></thead><tbody id="stats-audit"></tbody></table></div>
+        </div>
+      </section>
 
-    <section id="p-users" class="hidden">
-      <div class="search">
-        <input id="q" placeholder="Search nick / email / uid…" onkeydown="if(event.key==='Enter')loadUsers()">
-        <button class="btn primary" onclick="loadUsers()">Search</button>
-      </div>
-      <div class="tblwrap">
-        <table><thead><tr><th>UID</th><th>Nick</th><th>Email</th><th>Coins</th><th>VIP</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="urows"></tbody></table>
-      </div>
-    </section>
+      <!-- Users -->
+      <section class="view" id="v-users">
+        <div class="toolbar">
+          <input type="search" id="u-q" placeholder="Search name, email or UID" aria-label="Search users" onkeydown="if(event.key==='Enter')usersLoad(0)">
+          <select id="u-sort" aria-label="Sort users" onchange="usersLoad(0)">
+            <option value="uid_desc">Newest first</option>
+            <option value="uid_asc">Oldest first</option>
+            <option value="coin_desc">Coins: high to low</option>
+            <option value="vip_desc">VIP: high to low</option>
+          </select>
+          <select id="u-size" aria-label="Rows per page" onchange="usersLoad(0)">
+            <option value="20">20 per page</option><option value="50">50 per page</option><option value="100">100 per page</option>
+          </select>
+          <div class="spacer"></div>
+          <button class="btn" onclick="usersLoad(S.users.offset)" title="Reload users"><span id="ic-refresh-users"></span></button>
+        </div>
+        <div class="card">
+          <div id="users-state"></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>UID</th><th>User</th><th>Email</th><th class="num">Coins</th><th class="num">Flowers</th><th>VIP</th><th>Role</th><th>Status</th><th>Created</th><th class="num">Actions</th></tr></thead>
+            <tbody id="users-body"></tbody>
+          </table></div>
+          <div class="pager"><span class="range" id="users-range"></span><div class="spacer"></div>
+            <button class="btn sm" id="users-prev" onclick="usersPage(-1)"><span id="ic-left"></span>Previous</button>
+            <span id="users-page">1</span>
+            <button class="btn sm" id="users-next" onclick="usersPage(1)">Next <span id="ic-right-users"></span></button>
+          </div>
+        </div>
+      </section>
 
-    <section id="p-rooms" class="hidden">
-      <div class="tblwrap">
-        <table><thead><tr><th>RID</th><th>Name</th><th>Owner</th><th>Type</th><th>Created</th><th></th></tr></thead>
-        <tbody id="rrows"></tbody></table>
-      </div>
-    </section>
+      <!-- Rooms -->
+      <section class="view" id="v-rooms">
+        <div class="note-line">Showing the most recent rooms returned by the backend. Filtering and paging are applied locally to that result set.</div>
+        <div class="card">
+          <div id="rooms-state"></div>
+          <div class="table-wrap"><table><thead><tr><th>RID</th><th>Room</th><th>Owner UID</th><th>Type</th><th>Created</th><th class="num">Actions</th></tr></thead><tbody id="rooms-body"></tbody></table></div>
+          <div class="pager"><span class="range" id="rooms-range"></span><div class="spacer"></div>
+            <button class="btn sm" id="rooms-prev" onclick="roomsPage(-1)"><span id="ic-left-rooms"></span>Previous</button>
+            <span id="rooms-page">1</span>
+            <button class="btn sm" id="rooms-next" onclick="roomsPage(1)">Next <span id="ic-right-rooms"></span></button>
+          </div>
+        </div>
+      </section>
 
-    <section id="p-reports" class="hidden">
-      <div class="tblwrap">
-        <table><thead><tr><th>ID</th><th>Kind</th><th>Reporter</th><th>Target</th><th>Reason</th><th>Status</th><th></th></tr></thead>
-        <tbody id="reprows"></tbody></table>
-      </div>
-    </section>
+      <!-- Reports -->
+      <section class="view" id="v-reports">
+        <div class="toolbar">
+          <select id="r-filter" aria-label="Filter reports" onchange="S.reports.page=0;renderReports()">
+            <option value="all">All reports</option><option value="user_report">User reports</option><option value="bug">Bug reports</option><option value="open">Open only</option><option value="resolved">Resolved only</option>
+          </select>
+          <div class="spacer"></div>
+          <button class="btn" onclick="reportsLoad()" title="Reload reports"><span id="ic-refresh-reports"></span></button>
+        </div>
+        <div class="card">
+          <div id="reports-state"></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Kind</th><th>Reporter</th><th>Target</th><th>Details</th><th>Status</th><th>When</th><th class="num">Actions</th></tr></thead><tbody id="reports-body"></tbody></table></div>
+          <div class="pager"><span class="range" id="reports-range"></span><div class="spacer"></div>
+            <button class="btn sm" id="reports-prev" onclick="reportsPage(-1)"><span id="ic-left-reports"></span>Previous</button>
+            <span id="reports-page">1</span>
+            <button class="btn sm" id="reports-next" onclick="reportsPage(1)">Next <span id="ic-right-reports"></span></button>
+          </div>
+        </div>
+      </section>
 
-    <section id="p-audit" class="hidden">
-      <div class="tblwrap">
-        <table><thead><tr><th>#</th><th>Admin UID</th><th>Action</th><th>Target</th><th>Detail</th><th>When</th></tr></thead>
-        <tbody id="arows"></tbody></table>
-      </div>
-    </section>
+      <!-- Gift animations -->
+      <section class="view" id="v-anim">
+        <div class="note-line">Animations are authored in-house and served from our own storage. Only our own asset URLs may be configured here. Changes take effect immediately for all clients.</div>
+        <div class="toolbar">
+          <input type="search" id="a-q" placeholder="Filter by gift ID, name or type" aria-label="Search animations" oninput="renderAnim()">
+          <div class="spacer"></div>
+          <button class="btn primary" onclick="animEdit(0)"><span id="ic-plus"></span>Configure animation</button>
+          <button class="btn" onclick="animLoad()" title="Reload animations"><span id="ic-refresh-anim"></span></button>
+        </div>
+        <div class="card">
+          <div id="anim-state"></div>
+          <div class="table-wrap"><table><thead><tr><th>Gift</th><th>Type</th><th>Animation</th><th>Preview</th><th>Combo</th><th>Broadcast</th><th class="num">Version</th><th class="num">Actions</th></tr></thead><tbody id="anim-body"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- Audit -->
+      <section class="view" id="v-audit">
+        <div class="note-line">Every administrative change is recorded here by the backend.</div>
+        <div class="card">
+          <div id="audit-state"></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Admin UID</th><th>Action</th><th>Target UID</th><th>Detail</th><th>When</th></tr></thead><tbody id="audit-body"></tbody></table></div>
+          <div class="pager"><span class="range" id="audit-range"></span><div class="spacer"></div>
+            <button class="btn sm" id="audit-prev" onclick="auditPage(-1)"><span id="ic-left-audit"></span>Previous</button>
+            <span id="audit-page">1</span>
+            <button class="btn sm" id="audit-next" onclick="auditPage(1)">Next <span id="ic-right-audit"></span></button>
+          </div>
+        </div>
+      </section>
+
+    </div>
   </main>
 </div>
 
-<div class="modal" id="modal"><div class="box">
-  <h3 id="mtitle"></h3>
-  <div id="mbody"></div>
-  <div class="row"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" id="mok">Confirm</button></div>
-</div></div>
-
-<div id="toast"></div>
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="modal-title"></h3><button class="btn icon" onclick="closeModal()" aria-label="Close dialog"><span id="ic-close"></span></button></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" id="modal-ok">Confirm</button></div>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"><span id="toast-ic"></span><span id="toast-text"></span></div>
 
 <script>
-let TOKEN='', BASE=localStorage.getItem('wp_base')||'';
-const $=id=>document.getElementById(id);
-function toast(m,ok=true){const t=$('toast');t.textContent=m;t.style.borderColor=ok?'var(--green)':'var(--red)';t.style.display='block';setTimeout(()=>t.style.display='none',3000)}
-async function api(path,opts={}){const r=await fetch(BASE+path,{...opts,headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json',...opts.headers}});if(r.status===401){doLogout();throw new Error('auth expired')}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error?.message||('HTTP '+r.status));return d}
-function show(m,ok=true){toast(m,ok)}
-async function login(){
-  BASE=$('burl').value.trim().replace(/\/$/,'');localStorage.setItem('wp_base',BASE);
-  const r=await fetch(BASE+'/identity/signin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('lu').value.trim(),password:$('lp').value})});
-  const d=await r.json();
-  if(!d.accessToken){$('lerr').textContent=d.error?.message||'login failed';return}
-  // verify admin
-  try{const chk=await fetch(BASE+'/admin/stats',{headers:{Authorization:'Bearer '+d.accessToken}});if(chk.status===403){$('lerr').textContent='this account is not an admin';return}}catch(e){}
-  TOKEN=d.accessToken;sessionStorage.setItem('wp_tok',TOKEN);sessionStorage.setItem('wp_who',d.user?.username||'');
-  $('lerr').textContent='';openShell();
+"use strict";
+/* ── Icons: drawn inline, no emoji, no external assets ─────────────── */
+const PATHS={
+  dashboard:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  rooms:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  reports:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 15v7"/>',
+  audit:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  gift:'<rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18"/><path d="M12 8S9 3 7 5s2 3 5 3M12 8s3-5 5-3-2 3-5 3"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+  refresh:'<path d="M20.5 11a8.5 8.5 0 1 0-2.4 6.2M20.5 4v7h-7"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3h4"/>',
+  flower:'<path d="M12 21c3.5-3.2 6-6.4 6-10a6 6 0 1 0-12 0c0 3.6 2.5 6.8 6 10z"/><path d="M12 11v.01"/>',
+  vip:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/>',
+  ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6 18.4 18.4"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 10v7M14 10v7"/>',
+  check:'<path d="m4 12 5 5L20 6"/>',
+  close:'<path d="M18 6 6 18M6 6l12 12"/>',
+  left:'<path d="m15 18-6-6 6-6"/>',
+  right:'<path d="m9 18 6-6-6-6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5M12 17h.01"/>',
+  database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+  usersmall:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  reportflag:'<path d="M5 21V4M5 4h11l-2 3.5L16 11H5"/>'
+};
+function ico(n,s){return '<svg class="ico" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(PATHS[n]||'')+'</svg>'}
+function paintIcons(){
+  const map={'login-mark':'shield','side-mark':'shield','ic-stats':'dashboard','ic-users':'users','ic-rooms':'rooms','ic-reports':'reports','ic-anim':'gift','ic-audit':'audit','ic-shield':'usersmall','ic-logout':'logout','ic-refresh':'refresh','ic-refresh-users':'refresh','ic-refresh-reports':'refresh','ic-refresh-anim':'refresh','ic-left':'left','ic-left-rooms':'left','ic-left-reports':'left','ic-left-audit':'left','ic-right':'right','ic-right-users':'right','ic-right-rooms':'right','ic-right-reports':'right','ic-right-audit':'right','ic-plus':'plus','ic-close':'close','toast-ic':'check'};
+  Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=ico(map[id])});
 }
-function openShell(){$('login').style.display='none';$('shell').style.display='flex';$('who').textContent='@'+sessionStorage.getItem('wp_who');tab('stats')}
-function doLogout(){TOKEN='';sessionStorage.removeItem('wp_tok');$('shell').style.display='none';$('login').style.display='flex'}
-function tab(t){
-  ['stats','users','rooms','reports','audit'].forEach(x=>{
-    $('p-'+x).classList.toggle('hidden',x!==t);
-    document.querySelector(`[data-p="${x}"]`).classList.toggle('on',x===t);
-  });
-  $('ptitle').textContent=t[0].toUpperCase()+t.slice(1);
-  ({stats:loadStats,users:loadUsers,rooms:loadRooms,reports:loadReports,audit:loadAudit})[t]();
-}
-function fmtTime(ts){if(!ts)return'—';const d=new Date(ts*1000);return d.toLocaleString()}
-function esc(s){return String(s??'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]))}
 
-async function loadStats(){
+/* ── Core ──────────────────────────────────────────────────────────── */
+const $=id=>document.getElementById(id);
+const S={
+  tok:sessionStorage.getItem('wp_tok')||'', base:localStorage.getItem('wp_base')||'', who:sessionStorage.getItem('wp_who')||'',
+  tab:'stats',
+  users:{offset:0,q:'',rows:[]}, rooms:{page:0,size:20,rows:[]}, reports:{page:0,size:20,rows:[]},
+  audit:{page:0,size:20,rows:[]}, anim:{rows:[],catalog:[],byId:{}}
+};
+const TITLES={stats:['Dashboard','Backend overview'],users:['Users','Accounts, balances and access'],rooms:['Rooms','Active rooms on the server'],reports:['Reports','User reports and bug submissions'],anim:['Gift animations','In-house animation assets'],audit:['Audit log','Record of administrative changes']};
+const esc=v=>String(v===null||v===undefined?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>Number(v||0).toLocaleString();
+function fmtTime(ts){if(!ts)return '—';const d=new Date(Number(ts)*1000);return isNaN(d.getTime())?'—':d.toLocaleString()}
+function toast(msg,isErr){const t=$('toast');$('toast-text').textContent=msg;$('toast-ic').innerHTML=ico(isErr?'alert':'check');t.classList.toggle('error',!!isErr);t.style.display='flex';clearTimeout(toast.timer);toast.timer=setTimeout(()=>{t.style.display='none'},3600)}
+async function api(path,opts){
+  const o=opts||{};const headers=Object.assign({'Authorization':'Bearer '+S.tok,'Content-Type':'application/json'},o.headers||{});
+  let r;try{r=await fetch(S.base+path,{method:o.method||'GET',headers:headers,body:o.body})}catch(e){throw new Error('Cannot reach backend. Check the backend URL.')}
+  if(r.status===401){doLogout();throw new Error('Session expired. Sign in again.')}
+  let d={};try{d=await r.json()}catch(e){}
+  if(!r.ok)throw new Error(d.error&&d.error.message?d.error.message:'HTTP '+r.status);
+  return d;
+}
+function setState(where,mode,msg,retry){
+  const el=$(where);if(!el)return;
+  if(mode==='none'){el.innerHTML='';el.style.display='none';return}
+  el.style.display='block';
+  if(mode==='loading'){el.innerHTML='<div class="state">Loading…</div>';return}
+  if(mode==='error'){el.innerHTML='<div class="state"><div class="state-icon">'+ico('alert',26)+'</div><div class="state-title">Could not load this view</div><div>'+esc(msg)+'</div><button class="btn" onclick="'+retry+'">Try again</button></div>';return}
+  if(mode==='empty'){el.innerHTML='<div class="state"><div class="state-icon">'+ico('database',26)+'</div><div class="state-title">Nothing to show</div><div>'+esc(msg||'No records found.')+'</div></div>';return}
+}
+function pagerUI(prefix,page,size,total,hasMore){
+  const start=total===0?0:page*size+1,end=total===0?0:Math.min((page+1)*size,total);
+  const range=$(prefix+'-range');if(range)range.textContent=total===0?'No records':hasMore?('Showing '+start+'–'+end+'+ of at least '+end):('Showing '+start+'–'+end+' of '+total);
+  const p=$(prefix+'-page');if(p)p.textContent='Page '+(page+1);
+  const prev=$(prefix+'-prev'),next=$(prefix+'-next');
+  if(prev)prev.disabled=page<=0;if(next)next.disabled=!hasMore;
+}
+function go(tab){
+  S.tab=tab;
+  Object.keys(TITLES).forEach(t=>{const v=$('v-'+t),b=document.querySelector('[data-p="'+t+'"]');if(v)v.classList.toggle('active',t===tab);if(b)b.classList.toggle('active',t===tab)});
+  $('ptitle').textContent=TITLES[tab][0];$('psub').textContent=TITLES[tab][1];
+  reload();
+}
+function reload(){
+  ({stats:statsLoad,users:usersLoad,rooms:roomsLoad,reports:reportsLoad,audit:auditLoad,anim:animLoad})[S.tab]();
+}
+
+/* ── Login / session ───────────────────────────────────────────────── */
+async function doLogin(){
+  const btn=$('login-btn');btn.disabled=true;$('lerr').textContent='';
+  const base=$('burl').value.trim().replace(/\/+$/,'');
+  if(!base){$('lerr').textContent='Enter the backend URL.';btn.disabled=false;return}
+  S.base=base;localStorage.setItem('wp_base',base);
+  try{
+    const r=await fetch(base+'/identity/signin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('lu').value.trim(),password:$('lp').value})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok||!d.accessToken)throw new Error(d.error&&d.error.message?d.error.message:'Sign-in failed.');
+    const check=await fetch(base+'/admin/stats',{headers:{'Authorization':'Bearer '+d.accessToken}});
+    if(check.status===403)throw new Error('This account does not have administrator access.');
+    if(!check.ok)throw new Error('Backend rejected the session.');
+    S.tok=d.accessToken;S.who=d.user&&d.user.username?d.user.username:'administrator';
+    sessionStorage.setItem('wp_tok',S.tok);sessionStorage.setItem('wp_who',S.who);
+    openShell();
+  }catch(e){$('lerr').textContent=e.message;btn.disabled=false}
+}
+function openShell(){
+  $('login').style.display='none';$('shell').classList.add('on');$('who').textContent=S.who;
+  go('stats');
+}
+function doLogout(){
+  S.tok='';sessionStorage.removeItem('wp_tok');sessionStorage.removeItem('wp_who');
+  $('shell').classList.remove('on');$('shell').style.display='none';$('login').style.display='flex';
+  $('lerr').textContent='';$('lp').value='';
+}
+
+/* ── Dashboard ─────────────────────────────────────────────────────── */
+const STAT_META={users:['users','Users','Registered accounts'],admins:['shield','Administrators','Elevated accounts'],banned:['ban','Banned','Blocked accounts'],rooms:['rooms','Rooms','Server rooms'],messages:['database','Messages','Stored messages'],gifts_sent:['gift','Gifts sent','Gift transactions'],open_reports:['reports','Open reports','Awaiting action']};
+async function statsLoad(){
+  setState('stats-audit-state','loading');
+  $('stats-grid').innerHTML='<div class="state" style="grid-column:1/-1">Loading…</div>';
   try{
     const d=await api('/admin/stats');
-    $('stats').innerHTML=Object.entries(d).map(([k,v])=>`<div class="stat"><b>${v}</b><span>${k.replace(/_/g,' ')}</span></div>`).join('');
-    const a=await api('/admin/audit?limit=6');
-    $('mini-audit').innerHTML=(a.items||[]).map(x=>`<tr><td><span class="audit-act">${esc(x.action)}</span></td><td>${x.target_uid}</td><td>${esc(x.detail)}</td><td class="muted">${fmtTime(x.created_at)}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">no audit entries yet</td></tr>';
-  }catch(e){show(e.message,false)}
+    const keys=Object.keys(STAT_META).filter(k=>k in d);
+    if(!keys.length){$('stats-grid').innerHTML='<div class="state" style="grid-column:1/-1">No statistics returned by the backend.</div>'}
+    else $('stats-grid').innerHTML=keys.map(k=>{const m=STAT_META[k];return '<div class="stat"><div class="top">'+ico(m[0],14)+m[1]+'</div><div class="value">'+num(d[k])+'</div><div class="note">'+m[2]+'</div></div>'}).join('');
+    if('users' in d)$('cnt-users').textContent=num(d.users);
+    if('open_reports' in d)$('cnt-reports').textContent=num(d.open_reports);
+    try{
+      const a=await api('/admin/audit?limit=6');const items=a.items||[];
+      $('stats-audit').innerHTML=items.length?items.map(x=>'<tr><td><span class="badge neutral">'+esc(x.action)+'</span></td><td>'+esc(x.admin_uid)+'</td><td>'+esc(x.target_uid||'—')+'</td><td class="trunc">'+esc(x.detail||'—')+'</td><td class="cell-sub">'+fmtTime(x.created_at)+'</td></tr>').join(''):'<tr><td colspan="5" class="state">No administrator activity recorded yet.</td></tr>';
+      setState('stats-audit-state','none');
+    }catch(e){setState('stats-audit-state','error',e.message,'statsLoad()')}
+  }catch(e){$('stats-grid').innerHTML='<div class="state" style="grid-column:1/-1">'+esc(e.message)+' <button class="btn" onclick="statsLoad()">Try again</button></div>';setState('stats-audit-state','none')}
 }
-async function loadUsers(){
+
+/* ── Users (server-side paging + sorting) ─────────────────────────── */
+function sortUsers(rows){
+  const mode=$('u-sort').value;
+  const arr=rows.slice();
+  if(mode==='uid_asc')arr.sort((a,b)=>a.uid-b.uid);
+  else if(mode==='coin_desc')arr.sort((a,b)=>b.coin-a.coin);
+  else if(mode==='vip_desc')arr.sort((a,b)=>b.vip-a.vip||b.uid-a.uid);
+  else arr.sort((a,b)=>b.uid-a.uid);
+  return arr;
+}
+async function usersLoad(offset){
+  setState('users-state','loading');
+  S.users.q=$('u-q').value.trim();S.users.offset=Math.max(0,offset||0);
+  const size=parseInt($('u-size').value,10)||20;
   try{
-    const q=$('q').value.trim();
-    const d=await api('/admin/users?q='+encodeURIComponent(q)+'&limit=100');
-    $('urows').innerHTML=(d.items||[]).map(u=>`<tr>
-      <td>${u.uid}</td><td>${esc(u.nick_name)}</td><td class="muted">${esc(u.email||'—')}</td>
-      <td>${u.coin.toLocaleString()}</td><td>${u.vip>0?`<span class="badge b-gold">VIP ${u.vip}</span>`:'—'}</td>
-      <td>${u.is_admin?'<span class="badge b-admin">admin</span>':''} ${u.banned?'<span class="badge b-banned">banned</span>':(u.is_admin?'':'<span class="badge b-ok">ok</span>')}</td>
-      <td>
-        <button class="btn" onclick="coinModal(${u.uid})">Coins</button>
-        <button class="btn" onclick="vipModal(${u.uid},${u.vip})">VIP</button>
-        <button class="btn" onclick="roleToggle(${u.uid},${u.is_admin})">${u.is_admin?'Demote':'Promote'}</button>
-        <button class="btn danger" onclick="banToggle(${u.uid},${u.banned})">${u.banned?'Unban':'Ban'}</button>
-      </td></tr>`).join('')||'<tr><td colspan="7" class="muted">no users</td></tr>';
-  }catch(e){show(e.message,false)}
+    const d=await api('/admin/users?q='+encodeURIComponent(S.users.q)+'&limit='+size+'&offset='+S.users.offset);
+    S.users.rows=sortUsers(d.items||[]);
+    renderUsers();setState('users-state','none');
+  }catch(e){$('users-body').innerHTML='';setState('users-state','error',e.message,'usersLoad('+S.users.offset+')');pagerUI('users',S.users.offset/size,size,0,false)}
 }
-async function loadRooms(){
+function renderUsers(){
+  const size=parseInt($('u-size').value,10)||20,rows=S.users.rows;
+  $('users-body').innerHTML=rows.length?rows.map(u=>{
+    const status=u.banned?'<span class="badge bad">Banned</span>':u.is_admin?'<span class="badge">Administrator</span>':'<span class="badge good">Active</span>';
+    const vip=u.vip>0?'<span class="badge warn">'+ico('vip',11)+' VIP '+u.vip+'</span>':'<span class="cell-sub">—</span>';
+    return '<tr><td class="cell-main">'+u.uid+'</td><td><div class="cell-main">'+esc(u.nick_name||'—')+'</div><div class="cell-sub">UID '+u.uid+'</div></td><td class="trunc">'+esc(u.email||'—')+'</td><td class="num">'+num(u.coin)+'</td><td class="num">'+num(u.flower)+'</td><td>'+vip+'</td><td>'+(u.is_admin?'<span class="badge">Admin</span>':'<span class="badge neutral">Member</span>')+'</td><td>'+status+'</td><td class="cell-sub">'+fmtTime(u.created_at)+'</td><td><div class="actions"><button class="btn sm" onclick="coinModal('+u.uid+')">Coins</button><button class="btn sm" onclick="vipModal('+u.uid+','+u.vip+')">VIP</button><button class="btn sm" onclick="roleConfirm('+u.uid+','+(u.is_admin?1:0)+')">'+(u.is_admin?'Demote':'Promote')+'</button><button class="btn sm '+(u.banned?'':'danger')+'" onclick="banConfirm('+u.uid+','+(u.banned?1:0)+')">'+(u.banned?'Unban':'Ban')+'</button></div></td></tr>';
+  }).join(''):'<tr><td colspan="10" class="state">No users match this search.</td></tr>';
+  pagerUI('users',S.users.offset/size,size,rows.length,rows.length>=size);
+}
+function usersPage(dir){const size=parseInt($('u-size').value,10)||20;usersLoad(S.users.offset+dir*size)}
+
+/* ── Rooms ─────────────────────────────────────────────────────────── */
+async function roomsLoad(){
+  setState('rooms-state','loading');
+  try{const d=await api('/admin/rooms?limit=200');S.rooms.rows=d.items||[];S.rooms.page=0;renderRooms();setState('rooms-state','none')}
+  catch(e){$('rooms-body').innerHTML='';setState('rooms-state','error',e.message,'roomsLoad()');pagerUI('rooms',0,20,0,false)}
+}
+function renderRooms(){
+  const size=S.rooms.size,all=S.rooms.rows,start=S.rooms.page*size,rows=all.slice(start,start+size);
+  $('rooms-body').innerHTML=rows.length?rows.map(r=>'<tr><td class="cell-main">'+esc(r.rid)+'</td><td class="cell-main">'+esc(r.name||'—')+'</td><td>'+esc(r.owner)+'</td><td><span class="badge neutral">'+esc(r.type||'—')+'</span></td><td class="cell-sub">'+fmtTime(r.created_at)+'</td><td><div class="actions"><button class="btn sm danger" onclick="roomDelete('+JSON.stringify(String(r.rid))+')">'+ico('trash',12)+'Delete</button></div></td></tr>').join(''):'<tr><td colspan="6" class="state">No rooms found.</td></tr>';
+  pagerUI('rooms',S.rooms.page,size,all.length,start+size<all.length);
+}
+function roomsPage(dir){const max=Math.floor(Math.max(0,S.rooms.rows.length-1)/S.rooms.size);S.rooms.page=Math.min(max,Math.max(0,S.rooms.page+dir));renderRooms()}
+
+/* ── Reports ───────────────────────────────────────────────────────── */
+async function reportsLoad(){
+  setState('reports-state','loading');
+  try{const d=await api('/admin/reports?limit=200');S.reports.rows=d.items||[];S.reports.page=0;renderReports();setState('reports-state','none')}
+  catch(e){$('reports-body').innerHTML='';setState('reports-state','error',e.message,'reportsLoad()');pagerUI('reports',0,20,0,false)}
+}
+function renderReports(){
+  const f=$('r-filter').value;
+  const all=S.reports.rows.filter(r=>f==='all'||(f==='open'&&r.status!=='resolved')||(f==='resolved'&&r.status==='resolved')||r.kind===f);
+  const size=S.reports.size,start=S.reports.page*size,rows=all.slice(start,start+size);
+  $('reports-body').innerHTML=rows.length?rows.map(r=>{
+    const bug=r.kind==='bug';
+    return '<tr><td class="cell-main">'+r.id+'</td><td><span class="badge '+(bug?'warn':'neutral')+'">'+(bug?'Bug':'User report')+'</span></td><td>'+esc(r.reporter||'—')+'</td><td>'+esc(r.target||'—')+'</td><td class="trunc" title="'+esc(r.reason||'')+'">'+esc(r.reason||'—')+'</td><td><span class="badge '+(r.status==='resolved'?'good':'warn')+'">'+esc(r.status||'open')+'</span></td><td class="cell-sub">'+fmtTime(r.created_at)+'</td><td><div class="actions">'+(r.status==='resolved'?'<span class="cell-sub">Done</span>':'<button class="btn sm" onclick="reportResolve('+r.id+')">'+ico('check',12)+'Resolve</button>')+'</div></td></tr>';
+  }).join(''):'<tr><td colspan="8" class="state">No reports in this filter.</td></tr>';
+  pagerUI('reports',S.reports.page,size,all.length,start+size<all.length);
+}
+function reportsPage(dir){const all=S.reports.rows.filter(r=>{const f=$('r-filter').value;return f==='all'||(f==='open'&&r.status!=='resolved')||(f==='resolved'&&r.status==='resolved')||r.kind===f});const max=Math.floor(Math.max(0,all.length-1)/S.reports.size);S.reports.page=Math.min(max,Math.max(0,S.reports.page+dir));renderReports()}
+
+/* ── Audit ─────────────────────────────────────────────────────────── */
+async function auditLoad(){
+  setState('audit-state','loading');
+  try{const d=await api('/admin/audit?limit=200');S.audit.rows=d.items||[];S.audit.page=0;renderAudit();setState('audit-state','none')}
+  catch(e){$('audit-body').innerHTML='';setState('audit-state','error',e.message,'auditLoad()');pagerUI('audit',0,20,0,false)}
+}
+function renderAudit(){
+  const size=S.audit.size,all=S.audit.rows,start=S.audit.page*size,rows=all.slice(start,start+size);
+  $('audit-body').innerHTML=rows.length?rows.map(x=>'<tr><td class="cell-main">'+x.id+'</td><td>'+esc(x.admin_uid)+'</td><td><span class="badge neutral">'+esc(x.action)+'</span></td><td>'+esc(x.target_uid||'—')+'</td><td class="trunc">'+esc(x.detail||'—')+'</td><td class="cell-sub">'+fmtTime(x.created_at)+'</td></tr>').join(''):'<tr><td colspan="6" class="state">No audit entries recorded yet.</td></tr>';
+  pagerUI('audit',S.audit.page,size,all.length,start+size<all.length);
+}
+function auditPage(dir){const max=Math.floor(Math.max(0,S.audit.rows.length-1)/S.audit.size);S.audit.page=Math.min(max,Math.max(0,S.audit.page+dir));renderAudit()}
+
+/* ── Gift animations ───────────────────────────────────────────────── */
+async function animLoad(){
+  setState('anim-state','loading');
   try{
-    const d=await api('/admin/rooms?limit=100');
-    $('rrows').innerHTML=(d.items||[]).map(r=>`<tr><td>${r.rid}</td><td>${esc(r.name)}</td><td>${r.owner}</td><td>${r.type}</td><td class="muted">${fmtTime(r.created_at)}</td>
-      <td><button class="btn danger" onclick="delRoom(${r.rid})">Delete</button></td></tr>`).join('')||'<tr><td colspan="6" class="muted">no rooms</td></tr>';
-  }catch(e){show(e.message,false)}
+    const [a,g]=await Promise.all([api('/v1/const/gift-anims'),api('/v1/const/gifts?limit=200')]);
+    S.anim.rows=(a.items||[]).slice().sort((x,y)=>x.gift_id-y.gift_id);
+    S.anim.catalog=g.gifts||[];
+    S.anim.byId={};S.anim.catalog.forEach(x=>{S.anim.byId[x.gift_id]=x});
+    renderAnim();setState('anim-state','none');
+  }catch(e){$('anim-body').innerHTML='';setState('anim-state','error',e.message,'animLoad()')}
 }
-async function loadReports(){
-  try{
-    const d=await api('/admin/reports?limit=100');
-    $('reprows').innerHTML=(d.items||[]).map(r=>`<tr><td>${r.id}</td><td><span class="badge ${r.kind==='bug'?'b-gold':'b-admin'}">${r.kind}</span></td>
-      <td>${r.reporter}</td><td>${r.target||'—'}</td><td>${esc(r.reason)}</td><td><span class="badge ${r.status==='resolved'?'b-ok':'b-banned'}">${r.status}</span></td>
-      <td>${r.status!=='resolved'?`<button class="btn" onclick="resolve(${r.id})">Resolve</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">no reports</td></tr>';
-  }catch(e){show(e.message,false)}
+function renderAnim(){
+  const q=($('a-q').value||'').trim().toLowerCase();
+  const rows=S.anim.rows.filter(r=>!q||String(r.gift_id).includes(q)||String((S.anim.byId[r.gift_id]||{}).name||'').toLowerCase().includes(q)||String(r.anim_type).toLowerCase().includes(q));
+  const short=u=>u?'<span class="trunc" style="max-width:180px" title="'+esc(u)+'">'+esc(u)+'</span>':'<span class="cell-sub">—</span>';
+  $('anim-body').innerHTML=rows.length?rows.map(r=>{
+    const name=(S.anim.byId[r.gift_id]||{}).name;
+    return '<tr><td><div class="cell-main">#'+r.gift_id+(name?' — '+esc(name):'')+'</div></td><td><span class="badge neutral">'+esc(r.anim_type)+'</span></td><td>'+short((r.animation_urls||[])[0])+'</td><td>'+short(r.preview_url)+'</td><td>'+short(r.combo_url)+'</td><td>'+short(r.broadcast_url)+'</td><td class="num">v'+r.version+'</td><td><div class="actions"><button class="btn sm" onclick="animEdit('+r.gift_id+')">Edit</button></div></td></tr>';
+  }).join(''):'<tr><td colspan="8" class="state">No in-house animations configured yet. Use “Configure animation” to add one.</td></tr>';
 }
-async function loadAudit(){
-  try{
-    const d=await api('/admin/audit?limit=100');
-    $('arows').innerHTML=(d.items||[]).map(x=>`<tr><td>${x.id}</td><td>${x.admin_uid}</td><td><span class="audit-act">${esc(x.action)}</span></td><td>${x.target_uid}</td><td>${esc(x.detail)}</td><td class="muted">${fmtTime(x.created_at)}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">empty</td></tr>';
-  }catch(e){show(e.message,false)}
+function animEdit(id){
+  const cur=S.anim.rows.find(r=>r.gift_id===id)||{gift_id:id,anim_type:'lottie',animation_urls:[],preview_url:'',combo_url:'',broadcast_url:''};
+  const opts=S.anim.catalog.map(g=>'<option value="'+g.gift_id+'"'+(g.gift_id===id?' selected':'')+'>#'+g.gift_id+' — '+esc(g.name||'')+'</option>').join('');
+  const selector=id?'<div class="cell-main" style="margin-bottom:10px">Gift #'+id+(S.anim.byId[id]?' — '+esc(S.anim.byId[id].name):'')+'</div>':'<label class="field"><span>Gift</span><select id="f-gift"><option value="">Select a gift…</option>'+opts+'</select></label>';
+  openModal(id?'Edit animation — gift #'+id:'Configure in-house animation',
+    selector+
+    '<label class="field"><span>Animation type</span><select id="f-type"><option value="lottie"'+(cur.anim_type==='lottie'?' selected':'')+'>Lottie (JSON)</option><option value="mp4"'+(cur.anim_type==='mp4'?' selected':'')+'>MP4 video</option><option value="static"'+(cur.anim_type==='static'?' selected':'')+'>Static image</option></select></label>'+
+    '<label class="field"><span>Animation URL</span><input id="f-url" placeholder="/gifts/anim/&lt;id&gt;.json" value="'+esc((cur.animation_urls||[])[0]||'')+'"></label>'+
+    '<label class="field"><span>Preview URL</span><input id="f-preview" placeholder="/gifts/anim/&lt;id&gt;_preview.png" value="'+esc(cur.preview_url||'')+'"></label>'+
+    '<label class="field"><span>Combo URL</span><input id="f-combo" placeholder="/gifts/anim/&lt;id&gt;_combo.json" value="'+esc(cur.combo_url||'')+'"></label>'+
+    '<label class="field"><span>Broadcast URL</span><input id="f-broadcast" placeholder="/gifts/anim/&lt;id&gt;_broadcast.json" value="'+esc(cur.broadcast_url||'')+'"></label>'+
+    '<div class="hintline">Use paths under /gifts/anim/ that you uploaded to our own storage. No third-party asset URLs.</div>',
+    'Save animation',async()=>{
+      const gid=id||parseInt($('f-gift').value,10);
+      if(!gid)throw new Error('Select a gift.');
+      const body={anim_type:$('f-type').value,anim_url:$('f-url').value.trim(),preview_url:$('f-preview').value.trim(),combo_url:$('f-combo').value.trim(),broadcast_url:$('f-broadcast').value.trim()};
+      await api('/admin/gift-anims/'+gid,{method:'POST',body:JSON.stringify(body)});
+      toast('Animation saved for gift #'+gid);closeModal();animLoad();
+    });
 }
-function coinModal(uid){
-  $('mtitle').textContent='Adjust coins — uid '+uid;
-  $('mbody').innerHTML=`<label>Delta (negative deducts)</label><input id="mdelta" type="number" placeholder="e.g. 500 or -200">
-  <label>Reason</label><input id="mreason" placeholder="reason (audited)">`;
-  $('mok').onclick=async()=>{const d=parseInt($('mdelta').value);if(!d){show('enter delta',false);return}
-    try{await api('/admin/users/'+uid+'/coins',{method:'POST',body:JSON.stringify({delta:d,reason:$('mreason').value||'panel'})});show('coins adjusted');closeModal();loadUsers()}catch(e){show(e.message,false)}};
+
+/* ── Dialogs and actions ──────────────────────────────────────────── */
+function openModal(title,body,okLabel,onOk,danger){
+  $('modal-title').textContent=title;$('modal-body').innerHTML=body;
+  const ok=$('modal-ok');ok.textContent=okLabel;ok.className='btn '+(danger?'danger':'primary');
+  ok.onclick=async()=>{ok.disabled=true;try{await onOk()}catch(e){toast(e.message,true);ok.disabled=false}};
   $('modal').classList.add('on');
-}
-function vipModal(uid,cur){
-  $('mtitle').textContent='Set VIP tier — uid '+uid;
-  $('mbody').innerHTML=`<label>Tier (0 = none)</label><input id="mtier" type="number" min="0" value="${cur||0}">`;
-  $('mok').onclick=async()=>{try{await api('/admin/users/'+uid+'/vip',{method:'POST',body:JSON.stringify({tier:parseInt($('mtier').value)||0})});show('VIP set');closeModal();loadUsers()}catch(e){show(e.message,false)}};
-  $('modal').classList.add('on');
+  const first=$('modal-body').querySelector('input,select,textarea');if(first)first.focus();
 }
 function closeModal(){$('modal').classList.remove('on')}
-async function roleToggle(uid,isAdmin){try{await api('/admin/users/'+uid+'/role',{method:'POST',body:JSON.stringify({is_admin:!isAdmin})});show(isAdmin?'demoted':'promoted');loadUsers()}catch(e){show(e.message,false)}}
-async function banToggle(uid,banned){try{await api('/admin/users/'+uid+'/ban',{method:'POST',body:JSON.stringify({banned:!banned,reason:'panel'})});show(banned?'unbanned':'banned');loadUsers()}catch(e){show(e.message,false)}}
-async function delRoom(rid){if(!confirm('Delete room '+rid+'?'))return;try{await api('/admin/rooms/'+rid,{method:'DELETE'});show('room deleted');loadRooms()}catch(e){show(e.message,false)}}
-async function resolve(id){try{await api('/admin/reports/'+id+'/resolve',{method:'POST',body:JSON.stringify({})});show('resolved');loadReports()}catch(e){show(e.message,false)}}
-function logout(){doLogout()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('on')});
+$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
 
-if(sessionStorage.getItem('wp_tok')){
-  TOKEN=sessionStorage.getItem('wp_tok');
-  BASE=localStorage.getItem('wp_base')||'';
-  $('burl').value=BASE;
-  $('login').style.display='none';$('shell').style.display='flex';
-  $('who').textContent='@'+(sessionStorage.getItem('wp_who')||'');
-  tab('stats');
+function coinModal(uid){
+  openModal('Adjust coins — UID '+uid,
+    '<label class="field"><span>Amount (negative to deduct)</span><input id="f-delta" type="number" step="1" placeholder="e.g. 500 or -200"></label><label class="field"><span>Reason (recorded in audit log)</span><input id="f-reason" placeholder="e.g. manual correction"></label>',
+    'Apply',async()=>{
+      const delta=parseInt($('f-delta').value,10);if(!delta)throw new Error('Enter a non-zero amount.');
+      const d=await api('/admin/users/'+uid+'/coins',{method:'POST',body:JSON.stringify({delta:delta,reason:$('f-reason').value.trim()||'panel'})});
+      toast('New balance: '+num(d.balance));closeModal();usersLoad(S.users.offset);
+    });
+}
+function vipModal(uid,cur){
+  openModal('Set VIP tier — UID '+uid,
+    '<label class="field"><span>Tier (0 removes VIP)</span><input id="f-tier" type="number" min="0" step="1" value="'+(cur||0)+'"></label><div class="hintline">Only non-negative tiers are accepted by the backend.</div>',
+    'Save tier',async()=>{
+      const tier=parseInt($('f-tier').value,10);if(isNaN(tier)||tier<0)throw new Error('Enter a tier of 0 or higher.');
+      await api('/admin/users/'+uid+'/vip',{method:'POST',body:JSON.stringify({tier:tier})});
+      toast('VIP tier updated');closeModal();usersLoad(S.users.offset);
+    });
+}
+function roleConfirm(uid,isAdmin){
+  openModal((isAdmin?'Remove administrator access':'Grant administrator access')+' — UID '+uid,
+    '<p>'+(isAdmin?'This account will lose access to the administration console.':'This account will gain full access to the administration console.')+'</p>',
+    isAdmin?'Remove access':'Grant access',async()=>{
+      await api('/admin/users/'+uid+'/role',{method:'POST',body:JSON.stringify({is_admin:!isAdmin})});
+      toast(isAdmin?'Administrator access removed':'Administrator access granted');closeModal();usersLoad(S.users.offset);
+    },!!isAdmin);
+}
+function banConfirm(uid,banned){
+  openModal((banned?'Unban':'Ban')+' account — UID '+uid,
+    '<p>'+(banned?'The account will be able to sign in again.':'The account will be blocked and all of its active sessions revoked.')+'</p><label class="field"><span>Reason (recorded in audit log)</span><input id="f-reason" placeholder="e.g. policy violation"></label>',
+    banned?'Unban account':'Ban account',async()=>{
+      await api('/admin/users/'+uid+'/ban',{method:'POST',body:JSON.stringify({banned:!banned,reason:$('f-reason').value.trim()||'panel'})});
+      toast(banned?'Account unbanned':'Account banned');closeModal();usersLoad(S.users.offset);
+    },!banned);
+}
+function roomDelete(rid){
+  openModal('Delete room '+rid,'<p>This permanently removes the room from the server. This action cannot be undone.</p>','Delete room',async()=>{
+    await api('/admin/rooms/'+encodeURIComponent(rid),{method:'DELETE'});
+    toast('Room deleted');closeModal();roomsLoad();
+  },true);
+}
+async function reportResolve(id){
+  try{await api('/admin/reports/'+id+'/resolve',{method:'POST',body:'{}'});toast('Report resolved');reportsLoad()}catch(e){toast(e.message,true)}
+}
+
+/* ── Boot ──────────────────────────────────────────────────────────── */
+paintIcons();
+$('burl').value=S.base||'http://107.148.225.79';
+if(S.tok){
+  S.base=localStorage.getItem('wp_base')||'';
+  $('burl').value=S.base;
+  (async()=>{try{const r=await fetch(S.base+'/admin/stats',{headers:{'Authorization':'Bearer '+S.tok}});if(!r.ok)throw new Error('session');openShell()}catch(e){doLogout()}})();
 }
 </script>
 </body>
